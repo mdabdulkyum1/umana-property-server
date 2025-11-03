@@ -22,66 +22,16 @@ model User {
   name            String?
   email           String       @unique
   password        String?
-  referralCode    String       @unique
   image           String?
   isEmailVerified Boolean      @default(false)
   role            Role         @default(USER)
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
-  credits         Int          @default(0)
 
-  referralsGiven  Referral[]   @relation("ReferralsGiven")
-  referralsGotten Referral[]   @relation("ReferralsGotten")
-  purchases       Purchase[]
-  dashboard       Dashboard?
 
   @@map("users")
 }
 
-model Referral {
-  id           String          @id @default(auto()) @map("_id") @db.ObjectId
-  referrerId   String          @db.ObjectId
-  referredId   String          @db.ObjectId
-  referralCode String
-  status       ReferralStatus  @default(PENDING)
-  convertedAt  DateTime?
-  createdAt    DateTime        @default(now())
-
-  purchases    Purchase[]      @relation("ReferralPurchase")
-
-  referrer     User            @relation("ReferralsGiven", fields: [referrerId], references: [id])
-  referred     User            @relation("ReferralsGotten", fields: [referredId], references: [id])
-
-  @@unique([referrerId, referredId])
-  @@map("referrals")
-}
-
-model Purchase {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId          String    @db.ObjectId
-  productId       String
-  amount          Float
-  isFirstPurchase Boolean   @default(true)
-  purchaseDate    DateTime  @default(now())
-  referralId      String?   @db.ObjectId
-
-  user            User      @relation(fields: [userId], references: [id])
-  referral        Referral? @relation("ReferralPurchase", fields: [referralId], references: [id])
-
-  @@index([userId])
-  @@map("purchases")
-}
-
-model Dashboard {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId         String   @unique @db.ObjectId
-  referredUsers  Int      @default(0)
-  convertedUsers Int      @default(0)
-  totalCredits   Int      @default(0)
-
-  user           User     @relation(fields: [userId], references: [id])
-  @@map("dashboard")
-}
 
 model OTP {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
