@@ -16,7 +16,6 @@ router.get('/all', auth(Role.ADMIN), UsersController.getAllUsers);
 
 // Dashboard and referral routes
 router.get('/dashboard', auth(), UsersController.getUserDashboard);
-router.get('/referrals/history', auth(), UsersController.getReferralHistory);
 
 // Public routes
 router.get('/:id',auth(Role.USER), UsersController.getUserProfileById);

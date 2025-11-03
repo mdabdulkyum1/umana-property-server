@@ -12,34 +12,43 @@ enum Role {
   USER
 }
 
-enum ReferralStatus {
-  PENDING
-  CONVERTED
-}
-
 model User {
-  id              String       @id @default(auto()) @map("_id") @db.ObjectId
-  name            String?
-  email           String       @unique
-  password        String?
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  fatherName      String
+  phone           String   @unique
+  password        String
+  email           String?
   image           String?
-  isEmailVerified Boolean      @default(false)
-  role            Role         @default(USER)
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  role            Role     @default(USER)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-
-  @@map("users")
+  payments        Payment[]
 }
 
+model Payment {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @db.ObjectId
+  user            User     @relation(fields: [userId], references: [id])
+  cycleId         String?  @db.ObjectId
+  cycle           InvestmentCycle? @relation(fields: [cycleId], references: [id])
+  amount          Float
+  fine            Float    @default(0)
+  paymentDate     DateTime @default(now())
+  isPaid          Boolean  @default(false)
+  paymentMethod   String?
+  updatedBy       String?
+}
 
-model OTP {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   @db.ObjectId
-  otpCode   String
-  expiry    DateTime
-  createdAt DateTime @default(now())
-
-  @@unique([userId, otpCode])
-  @@map("otp")
+model InvestmentCycle {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  name            String?  
+  totalDeposit    Float    @default(0)   
+  totalProfit     Float    @default(0)  
+  isInvested      Boolean  @default(false) 
+  distributed     Boolean  @default(false) 
+  startDate       DateTime @default(now()) 
+  endDate         DateTime?                 
+  payments        Payment[]                 
 }
