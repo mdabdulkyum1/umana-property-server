@@ -5,7 +5,6 @@ import config from "../../../config";
 import ApiError from "../../errors/ApiError";
 import prisma from "../../lib/prisma";
 import { jwtHelpers } from "../../helpers/jwtHelpers";
-import { Role } from "@prisma/client";
 
 class AuthService {
 

@@ -50,5 +50,17 @@ model InvestmentCycle {
   distributed     Boolean  @default(false) 
   startDate       DateTime @default(now()) 
   endDate         DateTime?                 
-  payments        Payment[]                 
+  payments        Payment[]     
+
+  createdAt       DateTime @default(now())   
+  updatedAt       DateTime @updatedAt                    
+}
+
+model ProfitDistribution {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  cycleId       String   @db.ObjectId
+  userId        String   @db.ObjectId
+  amount        Float
+  createdAt     DateTime @default(now())
+  @@map("profit_distributions")
 }
