@@ -31,8 +31,7 @@ class AuthService {
         fatherName,
         phone,
         password: hashedPassword,
-        email,
-        role: Role.USER,
+        email
       },
     });
 
@@ -50,7 +49,12 @@ class AuthService {
   async loginUser(payload: { phone: string; password: string }) {
     const { phone, password } = payload;
 
+    console.log("phone", phone, "password", password);
+
     const user = await prisma.user.findUnique({ where: { phone } });
+
+    console.log("user", user);
+
     if (!user) {
       throw new ApiError(httpStatus.NOT_FOUND, "User not found");
     }

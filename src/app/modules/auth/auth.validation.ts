@@ -5,24 +5,20 @@ const registerUser = z.object({
     name: z.string().min(1, 'Name is required'),
     email: z.string().min(1, 'Email is required').email('Invalid email format'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
-    referralCode: z.string().optional(), // Optional referral code
   }),
 });
 
 const loginUser = z.object({
   body: z.object({
-    email: z.string().min(1, 'Email is required').email('Invalid email format'),
+    phone: z
+      .string()
+      .min(1, 'Phone is required')
+      .regex(/^01[3-9]\d{8}$/, 'Invalid phone number format'),
     password: z.string().min(1, 'Password is required'),
   }),
 });
 
-const verifyOtp = z.object({
-  body: z.object({
-    userId: z.string().min(1, 'User ID is required'),
-    otpCode: z.string().min(1, 'OTP code is required'),
-    type: z.string().min(1, 'Type is required'),
-  }),
-});
+
 
 const forgotPassword = z.object({
   body: z.object({
@@ -46,7 +42,6 @@ const changePassword = z.object({
 export const authValidation = {
   registerUser,
   loginUser,
-  verifyOtp,
   forgotPassword,
   resetPassword,
   changePassword,
