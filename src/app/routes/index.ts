@@ -1,7 +1,6 @@
 import express from "express";
 import { AuthRouters } from "../modules/auth/auth.routes";
 // import { UserRouters } from "../modules/user/Users.route";
-// import { EmailRouters } from "../modules/email/email.routes";
 import { PaymentRoutes } from "../modules/payment/payment.routes";
 import { investmentCycleRoutes } from "../modules/investmentCycle/investmentcycle.routes";
 import { AdminDashboardRoutes } from "../modules/dashboard/dashboard.routes";
@@ -17,6 +16,7 @@ const moduleRoutes = [
     //     path:"/users",
     //     route: UserRouters,
     // },
+
     {
         path: "/payments",
         route: PaymentRoutes,

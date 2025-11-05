@@ -60,8 +60,8 @@ const markAsInvested = catchAsync(async (req: Request, res: Response) => {
 });
 
 const distributeProfit = catchAsync(async (req: Request, res: Response) => {
-  const { totalProfit } = req.body;
-  const result = await investmentCycleService.distributeProfit(req.params.id, totalProfit);
+  
+  const result = await investmentCycleService.distributeProfit(req.params.id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     message: "Profit distributed successfully",

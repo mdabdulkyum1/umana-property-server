@@ -56,6 +56,13 @@ model InvestmentCycle {
   updatedAt       DateTime @updatedAt                    
 }
 
+model SystemBalance {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  balance   Float    @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+
 model ProfitDistribution {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   cycleId       String   @db.ObjectId

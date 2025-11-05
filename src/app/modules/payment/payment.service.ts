@@ -1,40 +1,29 @@
 import prisma from "../../lib/prisma";
 
 class PaymentService {
-  // Create a payment
-  async createPayment(payload: {
-    userId: string;
-    cycleId?: string;
-    amount: number;
-    paymentMethod?: string;
-    isPaid?: boolean;
-  }) {
+ 
+ async createPayment(userId: string, amount: number) {
     const payment = await prisma.payment.create({
       data: {
-        userId: payload.userId,
-        cycleId: payload.cycleId,
-        amount: payload.amount,
-        paymentMethod: payload.paymentMethod,
-        isPaid: payload.isPaid ?? false,
+        userId,
+        amount,
+        isPaid: true,
       },
     });
 
-    // Recalculate cycle totalDeposit if linked
-    if (payload.cycleId) {
-      const aggregate = await prisma.payment.aggregate({
-        where: { cycleId: payload.cycleId, isPaid: true },
-        _sum: { amount: true },
-      });
-      await prisma.investmentCycle.update({
-        where: { id: payload.cycleId },
-        data: { totalDeposit: aggregate._sum.amount ?? 0 },
-      });
+    let system = await prisma.systemBalance.findFirst();
+    if (!system) {
+      system = await prisma.systemBalance.create({ data: { balance: 0 } });
     }
+
+    await prisma.systemBalance.update({
+      where: { id: system.id },
+      data: { balance: system.balance + amount },
+    });
 
     return payment;
   }
 
-  // Get all payments
   async getAllPayments() {
     return await prisma.payment.findMany({
       include: {

@@ -9,7 +9,7 @@ import { Role } from "@prisma/client";
 const router = express.Router();
 
 router.post(
-  "/create",
+  "/",
   auth(Role.ADMIN),
   validateRequest(investmentCycleValidation.create),
   investmentCycleController.createCycle
