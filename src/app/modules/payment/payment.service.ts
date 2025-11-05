@@ -7,6 +7,7 @@ class PaymentService {
     cycleId?: string;
     amount: number;
     paymentMethod?: string;
+    isPaid?: boolean;
   }) {
     const payment = await prisma.payment.create({
       data: {
@@ -14,15 +15,19 @@ class PaymentService {
         cycleId: payload.cycleId,
         amount: payload.amount,
         paymentMethod: payload.paymentMethod,
-        isPaid: true,
+        isPaid: payload.isPaid ?? false,
       },
     });
 
-    // Update cycle totalDeposit
+    // Recalculate cycle totalDeposit if linked
     if (payload.cycleId) {
+      const aggregate = await prisma.payment.aggregate({
+        where: { cycleId: payload.cycleId, isPaid: true },
+        _sum: { amount: true },
+      });
       await prisma.investmentCycle.update({
         where: { id: payload.cycleId },
-        data: { totalDeposit: { increment: payload.amount } },
+        data: { totalDeposit: aggregate._sum.amount ?? 0 },
       });
     }
 
@@ -55,6 +60,40 @@ class PaymentService {
       data,
     });
     return updated;
+  }
+
+  // Assign a set of paid, unassigned payments to a cycle and recalc totals
+  async assignPaidPaymentsToCycle(cycleId: string, paymentIds?: string[]) {
+    const filter = {
+      isPaid: true,
+      cycleId: null as any,
+      ...(paymentIds && paymentIds.length ? { id: { in: paymentIds } } : {}),
+    };
+
+    const eligible = await prisma.payment.findMany({ where: filter });
+    if (!eligible.length) return { assigned: 0, totalAssignedAmount: 0 };
+
+    const amountSum = eligible.reduce((s, p) => s + p.amount, 0);
+
+    await prisma.$transaction([
+      prisma.payment.updateMany({ where: filter, data: { cycleId } }),
+      prisma.investmentCycle.update({
+        where: { id: cycleId },
+        data: { totalDeposit: { increment: amountSum } },
+      }),
+    ]);
+
+    // Ensure exact totalDeposit sync based on payments in cycle
+    const aggregate = await prisma.payment.aggregate({
+      where: { cycleId, isPaid: true },
+      _sum: { amount: true },
+    });
+    await prisma.investmentCycle.update({
+      where: { id: cycleId },
+      data: { totalDeposit: aggregate._sum.amount ?? 0 },
+    });
+
+    return { assigned: eligible.length, totalAssignedAmount: amountSum };
   }
 
   // Delete a payment

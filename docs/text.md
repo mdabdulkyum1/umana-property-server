@@ -115,3 +115,24 @@ Payment, investment cycle, dashboard, and profit distribution will be implemente
 💡 Tip:
 যখন নতুন চ্যাট শুরু করবে, তুমি শুধু লিখবে:
 "Umana Property project summary: [paste this summary]"
+
+
+
+
+
+
+
+
+
+#######
+
+ok fine no need eamil seystem right now so its comment out and i no need stripe i already uninstall it .... 
+
+i am leader of 20+ members my orthes member give me every month amount by bksh or nagod etc its manully and i payment resive then i update it so i need a seystem like dashboard all user show it and then when totoal amount increase as possible investmaet amount then we are invest any platform  and when i create investmentCycle then totla amount munies 
+
+so i need proper functionality dashboard 
+
+i am only admin i update any  thing every user data update now check all functions and need any adjustment update it 
+
+
+auth seystem also check not otp seystem need ok and if unnessery file remove ok now do this 

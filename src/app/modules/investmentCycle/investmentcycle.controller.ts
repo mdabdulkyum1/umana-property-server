@@ -3,6 +3,7 @@ import catchAsync from "../../helpers/catchAsync";
 import sendResponse from "../../helpers/sendResponse";
 import httpStatus from "http-status";
 import { investmentCycleService } from "./investmentcycle.service";
+import { paymentService } from "../payment/payment.service";
 
 const createCycle = catchAsync(async (req: Request, res: Response) => {
   const result = await investmentCycleService.createCycle(req.body);
@@ -77,3 +78,15 @@ export const investmentCycleController = {
   markAsInvested,
   distributeProfit,
 };
+
+// Extra admin utility: assign paid payments to a cycle
+export const assignPaidPaymentsToCycle = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { paymentIds } = req.body as { paymentIds?: string[] };
+  const result = await paymentService.assignPaidPaymentsToCycle(id, paymentIds);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "Paid payments assigned to cycle",
+    data: result,
+  });
+});

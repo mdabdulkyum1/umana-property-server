@@ -73,11 +73,13 @@ class InvestmentCycleService {
     });
     if (!cycle) throw new ApiError(httpStatus.NOT_FOUND, "Cycle not found");
 
-    const totalDeposit = cycle.payments.reduce((sum, p) => sum + p.amount, 0);
+    const totalDeposit = cycle.payments
+      .filter(p => p.isPaid)
+      .reduce((sum, p) => sum + p.amount, 0);
     if (totalDeposit === 0) throw new ApiError(httpStatus.BAD_REQUEST, "No deposits found");
 
     // Each user's profit = (userDeposit / totalDeposit) * totalProfit
-    for (const payment of cycle.payments) {
+    for (const payment of cycle.payments.filter(p => p.isPaid)) {
       const userProfit = (payment.amount / totalDeposit) * totalProfit;
       await prisma.payment.update({
         where: { id: payment.id },

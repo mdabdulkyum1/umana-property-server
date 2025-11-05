@@ -29,7 +29,7 @@ const auth = (...roles: string[]) => {
         config.jwt.access_secret as Secret
       );
 
-      if (!verifiedUser?.email) {
+      if (!verifiedUser?.id) {
         throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized!");
       }
       const { id } = verifiedUser;
@@ -133,7 +133,7 @@ export const optionalAuth = (...roles: string[]) => {
         config.jwt.access_secret as Secret
       );
 
-      if (!verifiedUser?.email) {
+      if (!verifiedUser?.id) {
         throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
       }
       const { id } = verifiedUser;
