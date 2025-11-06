@@ -14,3 +14,4 @@ router.patch("/:id", PaymentController.updatePayment);
 router.delete("/:id", PaymentController.deletePayment);
 
 export const PaymentRoutes = router;
+  

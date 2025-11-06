@@ -6,7 +6,13 @@ import { paymentService } from "./payment.service";
 
 // Create new payment
 const createPayment = catchAsync(async (req: Request, res: Response) => {
-  const result = await paymentService.createPayment(req.body);
+
+  const userId = req.body.userId;
+  const amount = req.body.amount;
+  if (!userId) throw new Error("User not authenticated");
+
+
+  const result = await paymentService.createPayment(userId, amount);
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     message: "Payment created successfully",
