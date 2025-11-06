@@ -5,10 +5,12 @@ import { Role } from "@prisma/client";
 
 const router = express.Router();
 
-router.post("/", auth(Role.ADMIN), PaymentController.createPayment);
-router.get("/", auth(Role.ADMIN), PaymentController.getAllPayments);
-router.get("/user/:userId", auth(Role.ADMIN), PaymentController.getUserPayments);
-router.patch("/:id", auth(Role.ADMIN), PaymentController.updatePayment);
-router.delete("/:id", auth(Role.ADMIN), PaymentController.deletePayment);
+router.use(auth(Role.ADMIN));
+
+router.post("/", PaymentController.createPayment);
+router.get("/", PaymentController.getAllPayments);
+router.get("/user/:userId", PaymentController.getUserPayments);
+router.patch("/:id", PaymentController.updatePayment);
+router.delete("/:id", PaymentController.deletePayment);
 
 export const PaymentRoutes = router;
