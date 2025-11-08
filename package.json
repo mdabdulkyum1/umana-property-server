@@ -13,7 +13,7 @@
   "keywords": [],
   "author": "Md Abdul Kyum",
   "license": "ISC",
-  "description": "Neo Market backend with Express, Prisma, MongoDB, and TypeScript",
+  "description": "Umana Property backend with Express, Prisma, MongoDB, and TypeScript",
   "dependencies": {
     "@prisma/client": "^6.17.1",
     "axios": "^1.12.2",

@@ -29,7 +29,7 @@ app.get('/api/v1/health', (req: Request, res: Response) => {
 });
 
 app.get("/", (req: Request, res: Response) => {
-  res.send({ Message: "Neo Market server is running. . ." });
+  res.send({ Message: "Umana Property server is running. . ." });
 });
 
 app.use(morgan("dev"));
