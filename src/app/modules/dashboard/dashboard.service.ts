@@ -11,12 +11,15 @@ class AdminDashboardService {
 
     const totalInCyclesAgg = await prisma.investmentCycle.aggregate({ _sum: { totalDeposit: true } });
 
+    const systemBalance = await prisma.systemBalance.findFirst();
+
     return {
       totalUsers,
       totalPaidAmount: paidAgg._sum.amount ?? 0,
       totalUnassignedPaid: unassignedAgg._sum.amount ?? 0,
       totalInCycles: totalInCyclesAgg._sum.totalDeposit ?? 0,
       openCycles: cyclesOpen,
+      systemBalance: systemBalance?.balance ?? 0,
     };
   }
 

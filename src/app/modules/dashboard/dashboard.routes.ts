@@ -6,7 +6,7 @@ import { getSummary, getUsersOverview } from "./dashboard.controller";
 const router = express.Router();
 
 router.get("/summary", auth(Role.ADMIN), getSummary);
-router.get("/users", auth(Role.ADMIN), getUsersOverview);
+router.get("/users", auth(Role.ADMIN || Role.USER), getUsersOverview);
 
 export const AdminDashboardRoutes = router;
 
