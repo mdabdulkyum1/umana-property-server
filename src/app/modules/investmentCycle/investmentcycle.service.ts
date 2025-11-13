@@ -5,15 +5,63 @@ import httpStatus from "http-status";
 
 class InvestmentCycleService {
   async createCycle(payload: IInvestmentCycleCreate) {
-    const cycle = await prisma.investmentCycle.create({
-      data: {
-        name: payload.name,
-        startDate: payload.startDate || new Date(),
-        endDate: payload.endDate,
+  // Step 1️⃣: Create the new cycle
+  const cycle = await prisma.investmentCycle.create({
+    data: {
+      name: payload.name,
+      startDate: payload.startDate || new Date(),
+      endDate: payload.endDate,
+      isInvested: payload.isInvested || false,
+    },
+  });
+
+  // Step 2️⃣: Find all paid payments not yet assigned to any cycle
+  const unpaidLinkedPayments = await prisma.payment.findMany({
+    where: {
+      isPaid: true,
+      cycleId: null, // only unlinked payments
+    },
+  });
+
+  console.log("unpaidLinkedPayments", unpaidLinkedPayments);
+
+  // Step 3️⃣: Attach them to the new cycle
+  if (unpaidLinkedPayments.length > 0) {
+    await prisma.payment.updateMany({
+      where: {
+        id: { in: unpaidLinkedPayments.map((p) => p.id) },
       },
+      data: { cycleId: cycle.id },
     });
-    return cycle;
+
+    // Step 4️⃣: Calculate total deposit for this cycle
+    const totalDeposit = unpaidLinkedPayments.reduce(
+      (sum, p) => sum + p.amount,
+      0
+    );
+
+    // Step 5️⃣: Update the cycle with the total deposit amount
+    await prisma.investmentCycle.update({
+      where: { id: cycle.id },
+      data: { totalDeposit },
+    });
   }
+
+  // Step 6️⃣: Return cycle with linked payments info
+  const updatedCycle = await prisma.investmentCycle.findUnique({
+    where: { id: cycle.id },
+    include: { payments: true },
+  });
+
+  return {
+    message:
+      unpaidLinkedPayments.length > 0
+        ? `Cycle created and linked ${unpaidLinkedPayments.length} payments.`
+        : "Cycle created but no paid payments were available to link.",
+    cycle: updatedCycle,
+  };
+}
+
 
   async getAllCycles() {
     const cycles = await prisma.investmentCycle.findMany({
@@ -40,7 +88,6 @@ class InvestmentCycleService {
     const cycle = await prisma.investmentCycle.findUnique({ where: { id } });
     if (!cycle) throw new ApiError(httpStatus.NOT_FOUND, "Cycle not found");
 
-    // totalDeposit দিলে system balance থেকে minus
     if (payload.totalDeposit && payload.totalDeposit > 0) {
       const system = await prisma.systemBalance.findFirst();
       if (!system || system.balance < payload.totalDeposit) {
@@ -53,7 +100,6 @@ class InvestmentCycleService {
       });
     }
 
-    // totalProfit দিলে system balance বাড়বে
     if (payload.totalProfit && payload.totalProfit > 0) {
       const system = await prisma.systemBalance.findFirst();
       if (!system) throw new ApiError(httpStatus.BAD_REQUEST, "System balance not found");

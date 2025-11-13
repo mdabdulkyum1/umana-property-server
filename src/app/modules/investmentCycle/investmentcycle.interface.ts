@@ -2,6 +2,8 @@ export interface IInvestmentCycleCreate {
   name: string;
   startDate?: Date;
   endDate?: Date;
+  isInvested: boolean;
+
 }
 
 export interface IInvestmentCycleUpdate {

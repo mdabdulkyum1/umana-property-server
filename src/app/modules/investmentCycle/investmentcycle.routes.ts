@@ -30,7 +30,6 @@ router.patch("/mark-invested/:id", investmentCycleController.markAsInvested);
 
 router.post(
   "/distribute/:id",
-  validateRequest(investmentCycleValidation.distribute),
   investmentCycleController.distributeProfit
 );
 
