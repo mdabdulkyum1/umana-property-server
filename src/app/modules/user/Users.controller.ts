@@ -61,6 +61,17 @@ export const UsersController = {
       data: result,
     });
   }),
+  getUserById: catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await userService.getUserById(id);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "user retrieved successfully",
+      data: result,
+    });
+  }),
 
   deleteUser: catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;

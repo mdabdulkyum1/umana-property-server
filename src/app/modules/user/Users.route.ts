@@ -12,6 +12,7 @@ router.patch('/me/uploads-profile-photo', auth(), UsersController.updateMyProfil
 
 
 router.get('/all', auth(Role.ADMIN, Role.USER), UsersController.getAllUsers);
+router.get('/get-user-payment/:id', auth(Role.ADMIN), UsersController.getUserById);
 router.delete("/delete/:id", auth(Role.ADMIN, Role.USER), UsersController.deleteUser);
 
 export const UserRouters = router;

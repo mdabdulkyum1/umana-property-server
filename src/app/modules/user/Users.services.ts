@@ -99,6 +99,19 @@ async getAllUsers() {
     return users;
   }
 
+ async getUserById(id: string) {
+  const user = await prisma.user.findUnique({
+    where: { id },
+    include: {
+      payments: true, 
+    },
+  });
+
+  return user;
+}
+
+
+
 }
 
 export const userService = new UserService();
