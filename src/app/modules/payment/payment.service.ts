@@ -40,6 +40,14 @@ async createPayment(userId: string, amount: number) {
     });
   }
 
+  async myPayments(userId: string) {
+    return await prisma.payment.findMany({
+      where: { userId },
+      include: { cycle: true },
+      orderBy: { paymentDate: "desc" },
+    });
+  }
+
   // Get payments by user
   async getUserPayments(userId: string) {
     return await prisma.payment.findMany({

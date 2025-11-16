@@ -4,7 +4,7 @@ import catchAsync from "../../helpers/catchAsync";
 import sendResponse from "../../helpers/sendResponse";
 import { paymentService } from "./payment.service";
 
-// Create new payment
+
 const createPayment = catchAsync(async (req: Request, res: Response) => {
 
   const userId = req.body.userId;
@@ -20,7 +20,7 @@ const createPayment = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// Get all payments
+
 const getAllPayments = catchAsync(async (req: Request, res: Response) => {
   const result = await paymentService.getAllPayments();
   sendResponse(res, {
@@ -30,7 +30,16 @@ const getAllPayments = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// Get user payments
+const myPayments = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  const result = await paymentService.myPayments(userId as string);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: "User payments fetched successfully",
+    data: result,
+  });
+})
+
 const getUserPayments = catchAsync(async (req: Request, res: Response) => {
   const { userId } = req.params;
   const result = await paymentService.getUserPayments(userId);
@@ -41,7 +50,6 @@ const getUserPayments = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// Update payment
 const updatePayment = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await paymentService.updatePayment(id, req.body);
@@ -52,7 +60,6 @@ const updatePayment = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// Delete payment
 const deletePayment = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await paymentService.deletePayment(id);
@@ -66,6 +73,7 @@ const deletePayment = catchAsync(async (req: Request, res: Response) => {
 export const PaymentController = {
   createPayment,
   getAllPayments,
+  myPayments,
   getUserPayments,
   updatePayment,
   deletePayment,

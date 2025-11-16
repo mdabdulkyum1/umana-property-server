@@ -9,6 +9,7 @@ router.use(auth(Role.ADMIN, Role.USER));
 
 router.post("/", PaymentController.createPayment);
 router.get("/", PaymentController.getAllPayments);
+router.get("/my-payments", PaymentController.myPayments);
 router.get("/user/:userId", PaymentController.getUserPayments);
 router.patch("/:id", PaymentController.updatePayment);
 router.delete("/:id", PaymentController.deletePayment);
