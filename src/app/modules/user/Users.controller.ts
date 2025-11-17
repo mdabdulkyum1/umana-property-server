@@ -61,6 +61,7 @@ export const UsersController = {
       data: result,
     });
   }),
+
   getUserById: catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
     const result = await userService.getUserById(id);
@@ -84,4 +85,5 @@ export const UsersController = {
       data: null,
     });
   }),
+  
 };

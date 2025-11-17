@@ -49,22 +49,19 @@ class UserService {
     return updatedUser;
   }
 
-  async updateProfileImage(userId: string, imageUrl: string) {
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: { image: imageUrl },
-      select: {
-        id: true,
-        name: true,
-        fatherName: true,
-        phone: true,
-        email: true,
-        image: true,
-      },
-    });
+  async updateProfileImage(userId: string, image: string) {
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: { image },
+    select: {
+      id: true,
+      image: true,
+    },
+  });
 
-    return user;
-  }
+  return user;
+}
+
 
   async deleteUser(userId: string) {
     const existingUser = await prisma.user.findUnique({
