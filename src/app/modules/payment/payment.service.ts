@@ -6,7 +6,7 @@ class PaymentService {
  
 async createPayment(userId: string, amount: number) {
   const today = new Date();
-  const fine = today.getDate() > 12 ? 10 : 0;
+  const fine = today.getDate() > 30 ? 10 : 0; // 10% fine
 
   const payment = await prisma.payment.create({
     data: {
