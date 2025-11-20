@@ -11,7 +11,7 @@ const app: Application = express();
 const authOptions = {
   origin: [
     "http://localhost:3000",            
-    "https://neo-market-client.vercel.app",    
+    "https://umana-property.vercel.app",    
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
