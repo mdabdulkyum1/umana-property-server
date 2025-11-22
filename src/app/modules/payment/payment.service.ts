@@ -56,30 +56,65 @@ async createPayment(userId: string, amount: number) {
     });
   }
 
-  async updatePayment(id: string, data: Partial<{ fine: number; isPaid: boolean }>) {
-  const oldPayment = await prisma.payment.findUnique({ where: { id } });
-  if (!oldPayment) throw new ApiError(httpStatus.NOT_FOUND, "Payment not found");
-
-  const updated = await prisma.payment.update({
+  async updatePayment(
+  id: string,
+  data: Partial<{ amount: number; fine: number; isPaid: boolean }>
+) {
+  const oldPayment = await prisma.payment.findUnique({
     where: { id },
-    data,
   });
 
-  if (oldPayment.fine > 0 && data.fine === 0) {
+  if (!oldPayment) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Payment not found");
+  }
+
+  const updateData: {
+    amount?: number;
+    fine?: number;
+    isPaid?: boolean;
+  } = { ...data };
+
+  let amountDiff = 0;
+  if (typeof data.amount === "number") {
+    amountDiff = data.amount - oldPayment.amount;
+  }
+
+  let fineToAddToBalance = 0;
+  if (typeof data.fine === "number") {
+    const oldFine = oldPayment.fine || 0;
+
+    updateData.amount = (updateData.amount ?? oldPayment.amount) + oldFine;
+
+    updateData.fine = 0;
+
+    fineToAddToBalance = oldFine;
+  }
+
+  const totalBalanceDiff = amountDiff + fineToAddToBalance;
+
+  if (totalBalanceDiff !== 0) {
     const system = await prisma.systemBalance.findFirst();
+
     if (system) {
       await prisma.systemBalance.update({
         where: { id: system.id },
-        data: { balance: system.balance + oldPayment.fine },
+        data: {
+          balance: system.balance + totalBalanceDiff,
+        },
       });
     }
   }
+
+  const updated = await prisma.payment.update({
+    where: { id },
+    data: updateData,
+  });
 
   return updated;
 }
 
 
-  // Assign a set of paid, unassigned payments to a cycle and recalc totals
+
   async assignPaidPaymentsToCycle(cycleId: string, paymentIds?: string[]) {
     const filter = {
       isPaid: true,
@@ -113,7 +148,6 @@ async createPayment(userId: string, amount: number) {
     return { assigned: eligible.length, totalAssignedAmount: amountSum };
   }
 
-  // Delete a payment
   async deletePayment(id: string) {
     await prisma.payment.delete({ where: { id } });
     return { message: "Payment deleted successfully" };
