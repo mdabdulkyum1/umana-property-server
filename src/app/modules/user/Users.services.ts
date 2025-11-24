@@ -2,6 +2,12 @@ import httpStatus from "http-status";
 import prisma from "../../lib/prisma";
 import ApiError from "../../errors/ApiError";
 
+interface updataData {
+  name: string;
+  phone: string;
+  email: string;
+}
+
 class UserService {
  
   async getMyProfile(userId: string) {
@@ -62,7 +68,6 @@ class UserService {
   return user;
 }
 
-
   async deleteUser(userId: string) {
     const existingUser = await prisma.user.findUnique({
       where: { id: userId },
@@ -122,6 +127,45 @@ async getAllUsers() {
   return usersWithPaymentFlag;
 }
 
+async makeLeader(id: string){
+     
+  const existingUser = await prisma.user.findUnique({
+      where: { id: id },
+    });
+
+    if (!existingUser) throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+
+    const updatedUser = await prisma.user.update({
+      where: { id: id },
+      data: { leader: true } ,
+    });
+
+    return updatedUser;
+}
+
+async updateUserByAdmin(id: string, payload: updataData){
+
+   const existingUser = await prisma.user.findUnique({
+      where: { id: id },
+    });
+
+    if (!existingUser) throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+
+    const updatedUser = await prisma.user.update({
+      where: { id: id },
+      data: payload,
+      select: {
+        id: true,
+        name: true,
+        phone: true,
+        email: true,
+        updatedAt: true,
+      },
+    });
+
+    return updatedUser;
+
+}
 
  async getUserById(id: string) {
   const user = await prisma.user.findUnique({
@@ -133,9 +177,6 @@ async getAllUsers() {
 
   return user;
 }
-
-
-
 }
 
 export const userService = new UserService();

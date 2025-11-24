@@ -74,6 +74,30 @@ export const UsersController = {
     });
   }),
 
+  makeLeader: catchAsync(async (req: Request, res: Response) => {
+      const { id } = req.params;
+      const result = await userService.makeLeader(id);
+
+      sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "user leader successfully",
+        data: result,
+      });
+  }),
+
+  updateUserByAdmin: catchAsync(async (req: Request, res: Response) => {
+      const { id } = req.params;
+      const result = await userService.updateUserByAdmin(id, req.body);
+
+      sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "user update successfully",
+        data: result,
+      });
+  }),
+
   deleteUser: catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
     const result = await userService.deleteUser(id);
