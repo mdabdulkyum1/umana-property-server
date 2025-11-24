@@ -80,22 +80,48 @@ class UserService {
   }
 
 async getAllUsers() {
-    const users = await prisma.user.findMany({
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        name: true,
-        image: true,
-        email: true,
-        phone: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+  const users = await prisma.user.findMany({
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      email: true,
+      phone: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
 
-    return users;
-  }
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+  const usersWithPaymentFlag = await Promise.all(
+    users.map(async (user) => {
+      const paymentCount = await prisma.payment.count({
+        where: {
+          userId: user.id,
+          paymentDate: {
+            gte: startOfMonth,
+            lt: endOfMonth,
+          },
+        },
+      });
+
+      const userData = {
+        ...user,
+        hasPayment: paymentCount > 0, 
+      };
+
+      return userData;
+    })
+  );
+
+  return usersWithPaymentFlag;
+}
+
 
  async getUserById(id: string) {
   const user = await prisma.user.findUnique({
