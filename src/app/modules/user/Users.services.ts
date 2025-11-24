@@ -127,21 +127,25 @@ async getAllUsers() {
   return usersWithPaymentFlag;
 }
 
-async makeLeader(id: string){
-     
+async toggleLeader(id: string) {
   const existingUser = await prisma.user.findUnique({
-      where: { id: id },
-    });
+    where: { id },
+  });
 
-    if (!existingUser) throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  if (!existingUser) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
 
-    const updatedUser = await prisma.user.update({
-      where: { id: id },
-      data: { leader: true } ,
-    });
+  const updatedUser = await prisma.user.update({
+    where: { id },
+    data: {
+      leader: !existingUser.leader,
+    },
+  });
 
-    return updatedUser;
+  return updatedUser;
 }
+
 
 async updateUserByAdmin(id: string, payload: updataData){
 
