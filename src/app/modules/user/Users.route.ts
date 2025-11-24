@@ -12,8 +12,8 @@ router.patch('/me/uploads-profile-photo', auth(), UsersController.updateMyProfil
 router.get('/all', auth(Role.ADMIN, Role.USER), UsersController.getAllUsers);
 router.get('/get-user-payment/:id', auth(Role.ADMIN), UsersController.getUserById);
 
-router.patch("make-leader/:id", auth(Role.ADMIN), UsersController.makeLeader);
-router.patch("update-user-by-admin/:id", auth(Role.ADMIN), UsersController.updateUserByAdmin);
+router.patch("/make-leader/:id", auth(Role.ADMIN), UsersController.makeLeader);
+router.patch("/update-user-by-admin/:id", auth(Role.ADMIN), UsersController.updateUserByAdmin);
 router.delete("/delete/:id", auth(Role.ADMIN), UsersController.deleteUser);
 
 export const UserRouters = router;
