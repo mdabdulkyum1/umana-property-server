@@ -127,7 +127,7 @@ async getAllUsers() {
   return usersWithPaymentFlag;
 }
 
-async toggleLeader(id: string) {
+async makeLeader(id: string) {
   const existingUser = await prisma.user.findUnique({
     where: { id },
   });
