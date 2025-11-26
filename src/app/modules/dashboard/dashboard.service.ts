@@ -32,6 +32,8 @@ async getUsersOverview() {
       fatherName: true,
       phone: true,
       image: true,
+      role: true,
+      leader: true,
       createdAt: true,
     },
   });
