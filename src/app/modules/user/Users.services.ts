@@ -21,6 +21,7 @@ class UserService {
         email: true,
         image: true,
         role: true,
+        leader: true,
         createdAt: true,
       },
     });
@@ -94,6 +95,7 @@ async getAllUsers() {
       email: true,
       phone: true,
       role: true,
+      leader:true,
       createdAt: true,
       updatedAt: true,
     },
