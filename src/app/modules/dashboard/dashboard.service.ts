@@ -74,6 +74,8 @@ async getUsersOverview() {
     fatherName: u.fatherName,
     phone: u.phone,
     image: u.image,
+    role: u.role,
+    leader: u.leader,
     createdAt: u.createdAt,
 
     totalPaid: sumMap.get(u.id) ?? 0,
