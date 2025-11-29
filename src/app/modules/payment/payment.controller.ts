@@ -9,10 +9,11 @@ const createPayment = catchAsync(async (req: Request, res: Response) => {
 
   const userId = req.body.userId;
   const amount = req.body.amount;
+  const date   = req.body.date;
   if (!userId) throw new Error("User not authenticated");
 
 
-  const result = await paymentService.createPayment(userId, amount);
+  const result = await paymentService.createPayment(userId, amount, date);
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     message: "Payment created successfully",

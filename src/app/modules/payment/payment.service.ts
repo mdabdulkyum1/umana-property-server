@@ -4,9 +4,21 @@ import httpStatus from 'http-status';
 
 class PaymentService {
  
-async createPayment(userId: string, amount: number) {
-  const today = new Date();
-  const fine = today.getDate() > 30 ? 10 : 0; // 10% fine
+async createPayment(userId: string, amount: number, date: Date) {
+ 
+  const paymentDate = new Date(date);
+
+  const DUE_DAY = 30;       
+  const FINE_PER_DAY = 10;  
+
+  let fine = 0;
+
+  const paymentDay = paymentDate.getDate();
+
+  if (paymentDay > DUE_DAY) {
+    const lateDays = paymentDay - DUE_DAY; 
+    fine = lateDays * FINE_PER_DAY;       
+  }
 
   const payment = await prisma.payment.create({
     data: {
@@ -14,6 +26,7 @@ async createPayment(userId: string, amount: number) {
       amount,
       isPaid: true,
       fine,
+      paymentDate, 
     },
   });
 
@@ -29,6 +42,7 @@ async createPayment(userId: string, amount: number) {
 
   return payment;
 }
+
 
   async getAllPayments() {
     return await prisma.payment.findMany({
